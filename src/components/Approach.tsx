@@ -6,22 +6,22 @@ const pillars = [
   {
     icon: Heart,
     title: 'Human + Strategic Leadership',
-    body: 'Strong leadership paired with a genuinely human approach. We build high-trust relationships with stakeholders and teams that reduce friction and unlock performance — even in the most complex accounts.',
+    body: 'Strong leadership paired with a genuinely human approach. We build high-trust relationships with stakeholders and teams that reduce friction and unlock performance, even in the most complex accounts.',
   },
   {
     icon: Cpu,
     title: 'AI-Forward Thinking',
-    body: 'Genuinely curious about new technologies and early adopters of AI-enabled delivery. We apply AI as a project partner to improve planning accuracy, workflow efficiency, and creative production speed.',
+    body: 'Genuinely enamoured with new technologies and early adopters of AI-enabled delivery practice. We apply AI as a project partner to improve planning accuracy, workflow efficiency, and creative production speed.',
   },
   {
     icon: TrendingUp,
-    title: 'Commercial Acumen',
-    body: 'Deep experience managing multi-million pound contracts with full commercial accountability. We apply business and technical acumen to create solutions that are strategically aligned with your product vision and budget reality.',
+    title: 'Outcome-Focused Delivery',
+    body: 'We keep the product vision front and centre, ensuring every decision drives real business value. Strong commercial, technical and business acumen underpins this, so solutions stay strategically aligned, not just delivered on paper.',
   },
   {
     icon: Shield,
     title: 'End-to-End Accountability',
-    body: 'From discovery and requirements through to launch and BAU — we take full ownership. No handoffs, no finger-pointing. We stay the course and ensure delivery continuity at every stage.',
+    body: 'From discovery and requirements through to launch and BAU, we take full ownership. No handoffs, no finger-pointing. We stay the course and ensure delivery continuity at every stage.',
   },
 ]
 
@@ -60,7 +60,7 @@ export function Approach() {
               className="flex gap-5"
             >
               <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mt-1">
-                <pillar.icon className="w-5 h-5 text-primary" />
+                <pillar.icon className="w-5 h-5 text-primary" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="font-display font-bold text-lg text-foreground mb-2">

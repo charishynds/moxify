@@ -21,7 +21,7 @@ export function Sectors() {
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section id="sectors" className="py-24 md:py-32">
+    <section id="sectors" className="py-24 md:py-32 bg-surface/50">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           ref={ref}
@@ -37,7 +37,7 @@ export function Sectors() {
             Sectors
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl text-lg">
-            Over two decades of delivery across a broad range of industries —
+            Over two decades of delivery across a broad range of industries,
             bringing cross-sector insight to every engagement.
           </p>
         </motion.div>

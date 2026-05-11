@@ -1,23 +1,55 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const links = [
-  { label: 'Services', href: '#services' },
   { label: 'Approach', href: '#approach' },
+  { label: 'Services', href: '#services' },
   { label: 'Sectors', href: '#sectors' },
-  { label: 'Credentials', href: '#credentials' },
 ]
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const hamburgerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const focusable = menuRef.current?.querySelectorAll<HTMLElement>(
+      'a, button, [tabindex]:not([tabindex="-1"])'
+    )
+    if (!focusable?.length) return
+    focusable[0].focus()
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false)
+        hamburgerRef.current?.focus()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
 
   return (
     <header
@@ -29,7 +61,7 @@ export function Navigation() {
       )}
     >
       <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="font-display font-bold text-xl tracking-tight">
+        <a href="#" aria-label="Moxify, return to top" className="font-display font-bold text-xl tracking-tight">
           <span className="text-foreground">MOX</span>
           <span className="text-primary">IFY</span>
         </a>
@@ -54,9 +86,11 @@ export function Navigation() {
 
         {/* Mobile hamburger */}
         <button
+          ref={hamburgerRef}
           className="md:hidden flex flex-col gap-1.5 p-1"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Toggle menu"
+          aria-expanded={menuOpen}
         >
           <span className={cn('w-5 h-0.5 bg-foreground transition-all', menuOpen && 'rotate-45 translate-y-2')} />
           <span className={cn('w-5 h-0.5 bg-foreground transition-all', menuOpen && 'opacity-0')} />
@@ -66,7 +100,7 @@ export function Navigation() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-surface border-b border-border px-6 py-4 flex flex-col gap-4">
+        <div ref={menuRef} className="md:hidden bg-surface border-b border-border px-6 py-4 flex flex-col gap-4">
           {links.map((link) => (
             <a
               key={link.href}

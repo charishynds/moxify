@@ -7,7 +7,6 @@ import {
   BrainCircuit,
   Users,
   GitBranch,
-  FileSearch,
 } from 'lucide-react'
 
 const services = [
@@ -18,40 +17,34 @@ const services = [
       'End-to-end leadership of complex, multi-stream digital programmes with full accountability for delivery, risk, and budget.',
   },
   {
-    icon: Zap,
-    title: 'Agile Delivery Management',
-    description:
-      'Hands-on Agile and Lean delivery — Sprint facilitation, backlog governance, and continuous improvement embedded in your teams.',
-  },
-  {
     icon: RefreshCw,
     title: 'Digital Transformation',
     description:
-      'Strategy to execution: modernising legacy platforms, consolidating digital estates, and driving measurable business change.',
-  },
-  {
-    icon: BrainCircuit,
-    title: 'AI-Enabled Delivery',
-    description:
-      'Leveraging AI tools to accelerate planning, optimise workflows, and sharpen decision-making across your delivery operation.',
+      'From modernising legacy platforms to consolidating digital estates, we manage transformation programmes that stay grounded in your vision and business objectives. The result is delivery that makes sense for your organisation, not just delivery that gets shipped.',
   },
   {
     icon: Users,
     title: 'Stakeholder & Executive Engagement',
     description:
-      'Building trusted relationships at C-suite level — translating complexity into clarity and managing expectations at pace.',
+      'Building trusted relationships at C-suite level, translating complexity into clarity and managing expectations at pace.',
+  },
+  {
+    icon: Zap,
+    title: 'Agile Delivery Management',
+    description:
+      'Hands-on Agile delivery: sprint facilitation, backlog governance, and continuous improvement embedded in your teams. We coach teams to build confidence and capability, not just process compliance.',
+  },
+  {
+    icon: BrainCircuit,
+    title: 'AI-Enabled Delivery',
+    description:
+      'We integrate AI tooling directly into your delivery operation, from intelligent planning and workflow optimisation to smarter reporting and faster decision-making.',
   },
   {
     icon: GitBranch,
     title: 'Delivery Framework Definition',
     description:
-      'Designing and embedding delivery operating models, governance structures, and Agile practices that scale with your organisation.',
-  },
-  {
-    icon: FileSearch,
-    title: 'Business Analysis & Requirements',
-    description:
-      'Scoping technical and business requirements, authoring user stories, and aligning product vision with delivery reality.',
+      'Designing and embedding delivery operating models, governance structures, and Agile practices. Includes team coaching, training, and template setup to build lasting capability within your organisation.',
   },
 ]
 
@@ -76,8 +69,8 @@ export function Services() {
             Services
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl text-lg">
-            From strategic programme oversight to hands-on delivery management —
-            we bring the experience to make complex work simple.
+            From strategic programme oversight to hands-on delivery management.
+            We bring the experience to make complex work simple.
           </p>
         </motion.div>
 
@@ -91,7 +84,7 @@ export function Services() {
               className="group bg-surface border border-border rounded-xl p-6 hover:border-primary/40 transition-colors"
             >
               <div className="mb-4 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <service.icon className="w-5 h-5 text-primary" />
+                <service.icon className="w-5 h-5 text-primary" aria-hidden="true" />
               </div>
               <h3 className="font-display font-bold text-base text-foreground mb-2">
                 {service.title}
@@ -102,6 +95,23 @@ export function Services() {
             </motion.div>
           ))}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.55 }}
+          className="mt-10 flex flex-wrap items-center gap-3"
+        >
+          <span className="text-xs text-muted-foreground uppercase tracking-widest mr-2">Methodologies</span>
+          {['Agile', 'Kanban', 'Scrum', 'Waterfall', 'Hybrid'].map((m) => (
+            <span
+              key={m}
+              className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs text-primary font-medium"
+            >
+              {m}
+            </span>
+          ))}
+        </motion.div>
       </div>
     </section>
   )

@@ -61,7 +61,7 @@ export function Credentials() {
             transition={{ duration: 0.5, delay: 0.15 }}
           >
             <div className="flex items-center gap-2 mb-6">
-              <Award className="w-5 h-5 text-primary" />
+              <Award className="w-5 h-5 text-primary" aria-hidden="true" />
               <h3 className="font-display font-bold text-lg text-foreground">
                 Certifications
               </h3>
@@ -90,14 +90,14 @@ export function Credentials() {
             transition={{ duration: 0.5, delay: 0.25 }}
           >
             <div className="flex items-center gap-2 mb-6">
-              <GraduationCap className="w-5 h-5 text-primary" />
+              <GraduationCap className="w-5 h-5 text-primary" aria-hidden="true" />
               <h3 className="font-display font-bold text-lg text-foreground">
                 Education
               </h3>
             </div>
             <div className="pl-4 border-l-2 border-primary/30 mb-10">
               <div className="font-medium text-foreground text-sm">
-                Maths with Computer Science — BSc (Hons)
+                Maths with Computer Science, BSc (Hons)
               </div>
               <div className="text-xs text-muted-foreground mt-0.5">
                 University of Leeds
