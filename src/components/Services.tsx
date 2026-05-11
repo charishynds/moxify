@@ -69,8 +69,9 @@ export function Services() {
             Services
           </h2>
           <p className="mt-4 text-muted-foreground max-w-xl text-lg">
-            From strategic programme oversight to hands-on delivery management.
-            We bring the experience to make complex work simple.
+            From strategic programme oversight to hands-on delivery management,
+            across a broad range of industries. We bring the experience to make
+            complex work simple.
           </p>
         </motion.div>
 

@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils'
 const links = [
   { label: 'Approach', href: '#approach' },
   { label: 'Services', href: '#services' },
-  { label: 'Sectors', href: '#sectors' },
 ]
 
 export function Navigation() {
@@ -60,34 +59,32 @@ export function Navigation() {
           : 'bg-transparent'
       )}
     >
-      <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <nav className="relative max-w-7xl mx-auto px-6 h-16 flex items-center">
         <a href="#" aria-label="Moxify, return to top" className="font-display font-bold text-xl tracking-tight">
           <span className="text-foreground">MOX</span>
           <span className="text-primary">IFY</span>
         </a>
 
-        {/* Desktop links */}
-        <ul className="hidden md:flex items-center gap-8">
+        {/* Desktop — all items centred */}
+        <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
           {links.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {link.label}
-              </a>
-            </li>
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {link.label}
+            </a>
           ))}
-        </ul>
-
-        <Button asChild size="sm" className="hidden md:inline-flex">
-          <a href="#contact">Get in touch</a>
-        </Button>
+          <Button asChild size="sm">
+            <a href="#contact">Get in touch</a>
+          </Button>
+        </div>
 
         {/* Mobile hamburger */}
         <button
           ref={hamburgerRef}
-          className="md:hidden flex flex-col gap-1.5 p-1"
+          className="md:hidden ml-auto flex flex-col gap-1.5 p-1"
           onClick={() => setMenuOpen((o) => !o)}
           aria-label="Toggle menu"
           aria-expanded={menuOpen}
