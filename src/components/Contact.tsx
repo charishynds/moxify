@@ -1,0 +1,153 @@
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+import { Send } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { supabase } from '@/lib/supabase'
+import { enquirySchema, type EnquiryFormValues } from '@/lib/schemas'
+
+export function Contact() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<EnquiryFormValues>({
+    resolver: zodResolver(enquirySchema),
+  })
+
+  const onSubmit = async (values: EnquiryFormValues) => {
+    if (!supabase) {
+      toast.error('Contact form not yet configured. Please email charis.hynds@moxify.co.uk directly.')
+      return
+    }
+    const { error } = await supabase.from('enquiries').insert([values])
+    if (error) {
+      toast.error('Something went wrong. Please try again or email us directly.')
+      return
+    }
+    toast.success("Thanks! We'll be in touch shortly.")
+    reset()
+  }
+
+  return (
+    <section id="contact" className="py-24 md:py-32">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Left: copy */}
+          <motion.div
+            ref={ref}
+            initial={{ opacity: 0, y: 24 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="text-sm font-medium text-primary tracking-widest uppercase">
+              Let's talk
+            </span>
+            <h2 className="mt-3 font-display font-bold text-3xl md:text-4xl lg:text-5xl tracking-tight">
+              Start a conversation
+            </h2>
+            <p className="mt-5 text-muted-foreground text-lg leading-relaxed max-w-md">
+              Whether you have a complex programme to tame or you're not sure
+              where to start — we're happy to have a no-obligation conversation
+              about what you're trying to achieve.
+            </p>
+            <div className="mt-8 space-y-3">
+              <div className="text-sm text-muted-foreground">
+                <span className="text-foreground font-medium">Email</span>
+                <br />
+                <a
+                  href="mailto:charis.hynds@moxify.co.uk"
+                  className="hover:text-primary transition-colors"
+                >
+                  charis.hynds@moxify.co.uk
+                </a>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right: form */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.15 }}
+          >
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="bg-surface border border-border rounded-2xl p-8 space-y-5"
+            >
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div className="space-y-1.5">
+                  <Label htmlFor="name">Name *</Label>
+                  <Input
+                    id="name"
+                    placeholder="Your name"
+                    {...register('name')}
+                    className={errors.name ? 'border-destructive' : ''}
+                  />
+                  {errors.name && (
+                    <p className="text-xs text-destructive">{errors.name.message}</p>
+                  )}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="company">Company</Label>
+                  <Input
+                    id="company"
+                    placeholder="Your company"
+                    {...register('company')}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@company.com"
+                  {...register('email')}
+                  className={errors.email ? 'border-destructive' : ''}
+                />
+                {errors.email && (
+                  <p className="text-xs text-destructive">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="message">Message *</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Tell us about your project or challenge…"
+                  rows={5}
+                  {...register('message')}
+                  className={errors.message ? 'border-destructive' : ''}
+                />
+                {errors.message && (
+                  <p className="text-xs text-destructive">{errors.message.message}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isSubmitting}
+                className="w-full group"
+              >
+                {isSubmitting ? 'Sending…' : 'Send message'}
+                <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </form>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
