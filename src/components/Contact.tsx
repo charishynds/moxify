@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { useForm } from 'react-hook-form'
+import { useForm, type SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { Send } from 'lucide-react'
@@ -14,7 +14,6 @@ import { enquirySchema, type EnquiryFormValues } from '@/lib/schemas'
 export function Contact() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const honeypotRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
@@ -25,14 +24,24 @@ export function Contact() {
     resolver: zodResolver(enquirySchema),
   })
 
-  const onSubmit = async (values: EnquiryFormValues) => {
-    if (honeypotRef.current?.value) return
+  const onSubmit: SubmitHandler<EnquiryFormValues> = async (values, event) => {
+    const form = event?.target
+    const website = form instanceof HTMLFormElement
+      ? new FormData(form).get('website')
+      : null
+
+    if (website) return
 
     if (!supabase) {
       toast.error('Contact form not yet configured. Please email info@moxify.co.uk directly.')
       return
     }
-    const { error } = await supabase.from('enquiries').insert([values])
+    const payload = {
+      ...values,
+      company: values.company || undefined,
+    }
+
+    const { error } = await supabase.from('enquiries').insert([payload])
     if (error) {
       console.error('Enquiry submission failed:', error)
       toast.error('Something went wrong. Please try again or email us directly.')
@@ -88,11 +97,10 @@ export function Contact() {
               onSubmit={handleSubmit(onSubmit)}
               className="bg-surface border border-border rounded-2xl p-8 space-y-5"
             >
-              {/* Honeypot — hidden from real users, filled by bots */}
+              {/* Honeypot - hidden from real users, filled by bots */}
               <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
                 <label htmlFor="website">Website</label>
                 <input
-                  ref={honeypotRef}
                   id="website"
                   name="website"
                   type="text"
@@ -107,6 +115,8 @@ export function Contact() {
                   <Input
                     id="name"
                     placeholder="Your name"
+                    autoComplete="name"
+                    maxLength={100}
                     aria-describedby={errors.name ? 'name-error' : undefined}
                     aria-invalid={!!errors.name}
                     {...register('name')}
@@ -121,6 +131,8 @@ export function Contact() {
                   <Input
                     id="company"
                     placeholder="Your company"
+                    autoComplete="organization"
+                    maxLength={100}
                     {...register('company')}
                   />
                 </div>
@@ -132,6 +144,8 @@ export function Contact() {
                   id="email"
                   type="email"
                   placeholder="you@company.com"
+                  autoComplete="email"
+                  maxLength={254}
                   aria-describedby={errors.email ? 'email-error' : undefined}
                   aria-invalid={!!errors.email}
                   {...register('email')}
@@ -146,8 +160,9 @@ export function Contact() {
                 <Label htmlFor="message">Message *</Label>
                 <Textarea
                   id="message"
-                  placeholder="Tell us about your project or challenge…"
+                  placeholder="Tell us about your project or challenge..."
                   rows={5}
+                  maxLength={5000}
                   aria-describedby={errors.message ? 'message-error' : undefined}
                   aria-invalid={!!errors.message}
                   {...register('message')}
@@ -164,7 +179,7 @@ export function Contact() {
                 disabled={isSubmitting}
                 className="w-full group"
               >
-                {isSubmitting ? 'Sending…' : 'Send message'}
+                {isSubmitting ? 'Sending...' : 'Send message'}
                 <Send className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Button>
             </form>
