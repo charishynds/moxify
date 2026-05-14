@@ -39,6 +39,20 @@ Preview the production build:
 npm run preview -- --host 127.0.0.1 --port 4173
 ```
 
+## Workflow
+
+This project follows the shared website workflow in `docs/operating-procedure.md`.
+
+In short:
+
+- `main` is the production branch once GitHub/Vercel have been updated.
+- Meaningful changes should be made on feature/fix/content/chore branches.
+- Use Vercel Preview Deployments for review.
+- Merge to `main` to deploy production.
+- Do not use Vercel "Promote to Production" as the normal release path.
+
+AI assistants should start with `AGENTS.md`, `CLAUDE.md`, `AI_INSTRUCTIONS.md`, or `.github/copilot-instructions.md`, all of which point back to the shared operating procedure.
+
 ## Environment Variables
 
 The contact form reads Supabase configuration from Vite environment variables:
