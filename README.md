@@ -1,73 +1,116 @@
-# React + TypeScript + Vite
+# Moxify
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Moxify is a React, TypeScript, Vite, and Tailwind site for senior delivery and programme management services. It includes a Supabase-backed contact form and Vercel deployment headers.
 
-Currently, two official plugins are available:
+## Local Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Use Node and npm versions compatible with the current Vite toolchain. This workspace has been checked with:
 
-## React Compiler
+- Node `v24.14.0`
+- npm `11.9.0`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Install dependencies:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Run the local dev server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Build the production bundle:
+
+```bash
+npm run build
+```
+
+Lint the project:
+
+```bash
+npm run lint
+```
+
+Preview the production build:
+
+```bash
+npm run preview -- --host 127.0.0.1 --port 4173
+```
+
+## Workflow
+
+This project follows the shared website workflow in `docs/operating-procedure.md`.
+
+In short:
+
+- `main` is the production branch once GitHub/Vercel have been updated.
+- Meaningful changes should be made on feature/fix/content/chore branches.
+- Use Vercel Preview Deployments for review.
+- Merge to `main` to deploy production.
+- Do not use Vercel "Promote to Production" as the normal release path.
+
+AI assistants should start with `AGENTS.md`, `CLAUDE.md`, `AI_INSTRUCTIONS.md`, or `.github/copilot-instructions.md`, all of which point back to the shared operating procedure.
+
+## Environment Variables
+
+The contact form reads Supabase configuration from Vite environment variables:
+
+```bash
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-public-anon-key
+```
+
+If either value is missing or invalid, the form shows a fallback message asking users to email `info@moxify.co.uk`.
+
+## Contact Form Requirements
+
+The browser submits directly to the Supabase `enquiries` table. Before production use, confirm these settings in Supabase:
+
+- Row Level Security is enabled on `enquiries`.
+- The anonymous role can insert only the intended enquiry columns.
+- The anonymous role cannot select, update, or delete enquiries.
+- Database constraints match the front end limits:
+  - `name` up to 100 characters
+  - `company` up to 100 characters, nullable
+  - `email` up to 254 characters
+  - `message` up to 5000 characters
+- Spam controls are acceptable for the current risk level. The front end includes a honeypot, but stronger protection should be added if spam appears.
+
+## Deployment Notes
+
+The Vercel headers live in `vercel.json`.
+
+- The Content Security Policy currently allows the production Supabase origin, Vercel Analytics, Google Fonts, self-hosted images, and app assets.
+- If `VITE_SUPABASE_URL` changes, update `connect-src` in `vercel.json` at the same time.
+- HSTS is enabled. Confirm HTTPS and canonical-domain redirects are correct before relying on preload behavior.
+
+## Verification Checklist
+
+Run these before release:
+
+```bash
+npm run lint
+npm run build
+npm audit --omit=dev
+npm audit
+```
+
+Then smoke test the production build locally:
+
+- Load the preview URL and confirm HTTP 200.
+- Check desktop and mobile viewports.
+- Confirm the hero heading, intro copy, and CTAs are visible above the fold.
+- Submit the contact form blank and confirm validation errors appear.
+- Try an invalid email and short message.
+- Confirm long fields are constrained by the front end limits.
+- Confirm a valid-looking submission either reaches Supabase or shows the configured fallback when Supabase is not configured.
+
+External production checks:
+
+- Google PageSpeed Insights for `https://moxify.co.uk/`.
+- Google Search Console Core Web Vitals field data.
+- Vercel production headers and environment variables.
+- Supabase RLS and table policies.
+- Real-device smoke tests on iPhone Safari and Android Chrome.

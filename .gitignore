@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local Codex preview/review artifacts
+.codex-*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
