@@ -8,6 +8,7 @@ This file tracks account-side setup that cannot be completed safely from local G
 - Remote branch `origin/main` has been pushed.
 - The current review work remains on `review-must-should-fixes-20260513`.
 - `master` still exists locally and remotely until GitHub's default branch is changed.
+- Canonical global SOP exists at `C:\Development\_shared\website-operating-procedure.md`.
 
 ## Must Do In GitHub
 

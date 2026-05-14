@@ -1,6 +1,41 @@
 # Website Project Operating Procedure
 
+Canonical shared SOP path:
+
+```text
+C:\Development\_shared\website-operating-procedure.md
+```
+
+This repo-local file is a project copy of the shared SOP. If the shared SOP changes, update this file or replace it with the latest shared version.
+
 This procedure is intended for small client websites built by one person, with enough structure that another developer or AI assistant can step in safely.
+
+## AI Bootstrap Rule
+
+If an AI assistant is asked to "read the global SOP and follow it", that instruction means:
+
+1. Read the global SOP first.
+2. Inspect the current repo before asking questions.
+3. Create or update the required repo-local workflow files:
+   - `AGENTS.md`
+   - `CLAUDE.md`
+   - `AI_INSTRUCTIONS.md`
+   - `.github/copilot-instructions.md`
+   - `.github/pull_request_template.md`
+   - `.env.example`
+   - `docs/repo-admin-checklist.md`
+   - relevant `README.md` workflow/setup/deployment sections
+4. Identify project-specific setup gaps and document them.
+5. Ask before running checks.
+6. Ask before any networked, external, GitHub, Vercel, Supabase, DNS, Search Console, deploy, push, merge, branch deletion, dependency install/update, or destructive action.
+7. Do not mark external checks complete unless they were actually run against the correct project/site.
+8. Leave a clear summary of completed setup and remaining owner actions.
+
+The project owner should only need to say:
+
+```text
+Read the global SOP and follow it for this project.
+```
 
 ## Standard Workflow
 
@@ -47,7 +82,7 @@ Use `http://localhost:5173/` for browser preview unless another port is chosen.
 
 ## Pre-PR Checks
 
-Before pushing or opening a pull request:
+Before pushing or opening a pull request, ask the project owner before running checks. Once approved, run:
 
 ```bash
 npm run lint
@@ -55,13 +90,35 @@ npm run build
 npm audit --omit=dev
 ```
 
-Run `npm audit` as well when dependencies changed or before release.
+Run `npm audit` as well when dependencies changed or before release, but ask before running it because it may use network access and registry quota.
 
 For visual changes, check:
 
 - desktop viewport
 - mobile viewport around 390px wide
 - any forms, CTAs, navigation, and footer links
+
+## Check Consent Rules
+
+AI assistants must not run checks or actions that affect external services, spend quota, deploy, publish, or change account-side settings without asking first.
+
+Safe to inspect without asking:
+
+- Read project files.
+- Search the repo.
+- Inspect Git status, branches, diffs, and local config.
+- Explain what checks should be run.
+
+Ask before running:
+
+- `npm install` or any dependency install/update.
+- `npm audit`, PageSpeed Insights, Lighthouse against live URLs, or any networked check.
+- Vercel, GitHub, Supabase, DNS, Search Console, analytics, or hosting account actions.
+- Git push, merge, branch deletion, release tagging, or deployment promotion.
+- Any command that sends form submissions, test emails, or data to an external service.
+- Any destructive or hard-to-undo command.
+
+Local checks such as `npm run lint`, `npm run build`, and local browser previews should still be announced first. If the owner has explicitly asked for a review, PR readiness check, or pre-production check, that counts as approval for local lint/build/preview checks only, not for external or account-side actions.
 
 ## Pull Request Checklist
 
@@ -109,18 +166,77 @@ For client/commercial sites, confirm the hosting plan permits commercial use.
 - Add a `.env.example` file with variable names and safe placeholder values.
 - Store production and preview values in the deployment provider.
 
-## Client Launch Checklist
+## Pre-Production Checklist
 
-Before launch:
+Before launch or production merge, ask the project owner which checks they want run now. Do not run external checks, deploy, or change account settings without explicit approval.
+
+Local code and build checks:
+
+- Confirm working tree status and note unrelated local changes.
+- Run `npm run lint`.
+- Run `npm run build`.
+- Run dependency audit after approval: `npm audit --omit=dev`; run full `npm audit` before release or when dependencies changed.
+- Start a local preview at `localhost` and smoke test the site.
+
+Visual and responsive checks:
+
+- Check desktop viewport.
+- Check mobile viewport around 390px wide.
+- Check tablet or mid-width breakpoint if the layout changes significantly.
+- Confirm no important text clips, overflows, overlaps, or becomes unreadably small.
+- Confirm hero/above-the-fold content is visible without waiting for client-side animation.
+
+Forms and interactive behavior:
+
+- Confirm required-field validation.
+- Confirm invalid email and min/max length validation.
+- Confirm submit buttons prevent duplicate submission.
+- Confirm success/error/fallback states.
+- Confirm any real external submission target only after approval.
+- Confirm backend/database rules match the front end limits.
+
+Environment and deployment readiness:
+
+- Confirm `.env.example` lists required variables with safe placeholders.
+- Confirm `.env.local` is ignored and not committed.
+- Confirm Vercel or hosting preview and production environment variables are configured.
+- Confirm production branch is `main`.
+- Confirm branch/PR previews are enabled.
+- Confirm merge to `main` is the normal production release path.
+
+Security and privacy:
+
+- Confirm security headers are configured locally or in hosting config.
+- Confirm deployed headers after the site is deployed.
+- Confirm Content Security Policy allows required fonts, analytics, APIs, images, and form endpoints.
+- Confirm no secrets, private keys, or personal data are committed.
+- Confirm form/database permissions, RLS policies, or backend access rules are production-safe.
+
+SEO and launch basics:
+
+- Confirm page title and meta description.
+- Confirm canonical URL.
+- Confirm Open Graph/Twitter image and metadata.
+- Confirm favicon and app icons.
+- Confirm `robots.txt` and `sitemap.xml`.
+- Confirm domain, HTTPS, redirects, and HSTS readiness.
+
+Performance and Core Web Vitals:
+
+- Run PageSpeed Insights or Lighthouse only after approval and only against the correct preview/production URL.
+- Check LCP, INP, and CLS against Google's current Core Web Vitals thresholds.
+- Investigate bundle size only if lab or field data shows JavaScript is a material bottleneck.
+
+External checks to record separately:
 
 - Production domain points at the intended deployment.
 - HTTPS works.
 - Canonical redirects are correct.
-- Forms work and send data to the correct destination.
-- Security headers are present.
-- Page title, meta description, Open Graph image, favicon, robots.txt, and sitemap are correct.
-- Mobile and desktop smoke tests pass.
-- PageSpeed Insights has been checked for the live URL.
+- Forms send data to the correct destination.
+- Security headers are present on the deployed URL.
+- PageSpeed Insights has been checked for the deployed URL.
+- Google Search Console or analytics checks are complete when available.
+- Real-device checks are complete on iPhone Safari and Android Chrome where practical.
 
 ## AI Assistant Instructions
 
@@ -129,7 +245,8 @@ AI assistants must:
 - Read this operating procedure before making workflow, Git, deployment, or release decisions.
 - Preserve existing user changes and never reset or revert unrelated work.
 - Prefer branch + pull request for meaningful changes.
-- Run lint/build checks before recommending a merge.
+- Ask before running checks, especially external/networked checks, account-side actions, deploys, or destructive commands.
+- Run approved lint/build checks before recommending a merge.
 - Record external checks that require account access rather than pretending they were completed.
 - Keep `README.md` and relevant docs up to date when project setup changes.
 

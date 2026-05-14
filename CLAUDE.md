@@ -1,6 +1,10 @@
 # Claude Instructions
 
-Before making workflow, Git, deployment, or release decisions in this repo, read:
+Before making workflow, Git, deployment, or release decisions in this repo, read the global SOP first:
+
+- `C:\Development\_shared\website-operating-procedure.md`
+
+If that path is unavailable, use the repo-local copy:
 
 - `docs/operating-procedure.md`
 - `README.md`
