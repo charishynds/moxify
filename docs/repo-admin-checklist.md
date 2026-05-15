@@ -12,6 +12,7 @@ This file tracks account-side setup that cannot be completed safely from local G
 - Vercel preview deployments are enabled and working for pull request branches.
 - Vercel Production and Preview environment variables use the same Supabase project intentionally for now.
 - Canonical global SOP exists at `C:\Development\_shared\website-operating-procedure.md`.
+- SOP-required repo files confirmed present: `AGENTS.md`, `AI_INSTRUCTIONS.md`, `.env.example`, `.github/copilot-instructions.md`, `.github/pull_request_template.md`.
 
 ## Must Do In GitHub
 
@@ -62,7 +63,7 @@ Completed for this repo:
 5. Required fields are enforced server-side as well as in the browser.
 6. The Vercel `VITE_SUPABASE_URL` value matches the Supabase project allowed in `vercel.json`.
 7. The Vercel `VITE_SUPABASE_ANON_KEY` value is a publishable/anon key, not a secret or service role key.
-8. Spam expectations are acceptable for launch, with the current frontend honeypot treated as lightweight protection rather than a complete anti-spam system.
+8. Rate limiting trigger added: blocks more than 3 submissions from the same email address within a 1-hour window.
 
 Current intentional setup:
 
@@ -71,18 +72,48 @@ Current intentional setup:
 
 Ongoing rule:
 
-- Keep the current frontend honeypot as lightweight spam protection for launch. Add stronger protection, such as Cloudflare Turnstile, reCAPTCHA, rate limiting, or a serverless form endpoint, if spam becomes a real issue.
+- Honeypot plus the database rate limit trigger are the current spam protections. Add Cloudflare Turnstile, reCAPTCHA, or a serverless endpoint if spam becomes a real problem after launch.
+
+## Security Hardening
+
+Completed for this repo:
+
+1. `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, and `Permissions-Policy` set in `vercel.json`.
+2. `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload` added to `vercel.json`.
+3. `Content-Security-Policy` added to `vercel.json` — allowlists Google Fonts, Supabase project, and Vercel Analytics; blocks all other origins.
+4. Static file cache-control regex corrected to match actual filenames in `/public/`.
+5. Form max-length constraints added to Zod schema (`name`/`company`: 100, `email`: 254, `message`: 5000).
+
+Remaining:
+
+- After DNS is live, run the deployed URL through [securityheaders.com](https://securityheaders.com) to confirm all headers are applied correctly in production.
 
 ## Remaining External Checks
 
-These are not blockers for the current GitHub/Vercel/Supabase setup, but should be done before or shortly after the real custom domain launch:
+Before DNS cutover (on the Vercel preview URL):
 
-1. Submit one test enquiry on the production Vercel URL and confirm it appears in Supabase.
-2. Confirm Vercel Analytics is receiving data after the production site has real visits.
-3. Run PageSpeed Insights or Lighthouse against the correct live URL after DNS points at the new site.
-4. Check Google Search Console Core Web Vitals once field data is available.
-5. Smoke test on real iPhone Safari and Android Chrome.
-6. Confirm custom domain, HTTPS redirects, and HSTS readiness before enabling any preload-related DNS/browser commitments.
+1. Run `npm audit --omit=dev` locally and resolve any high or critical vulnerabilities.
+2. Run `npm run lint` and `npm run build` and confirm both pass cleanly.
+3. Run PageSpeed Insights or Lighthouse against the Vercel preview URL (lab data only at this stage; field data accumulates after real traffic on the live URL).
+4. Confirm security headers on the Vercel preview URL via [securityheaders.com](https://securityheaders.com).
+5. Smoke test on real iPhone Safari and real Android Chrome against the Vercel preview URL.
+6. Submit one test enquiry on the Vercel preview URL and confirm it appears in Supabase.
+
+DNS cutover:
+
+7. **DNS** — Point `moxify.co.uk` DNS records to Vercel. This is the final go-live step.
+
+Shortly after DNS cutover:
+
+8. Confirm the live URL loads correctly and HTTPS works.
+9. Confirm Vercel Analytics is receiving data.
+10. Re-run PageSpeed Insights against the live URL to confirm production performance.
+
+Post-launch:
+
+11. **Google Search Console** — Verify the `moxify.co.uk` domain and submit `https://moxify.co.uk/sitemap.xml`. Check Core Web Vitals once field data is available (typically 28 days after real traffic).
+12. **Analytics decision** — Decide whether Vercel Analytics alone is sufficient or whether to add GA4 or Plausible. Vercel Analytics is already active and cookie-free. Adding GA4 would require a cookie consent banner.
+13. **Resend DNS** — Add DNS records for `moxify.co.uk` so contact form notification emails send from a Moxify address rather than `onboarding@resend.dev`.
 
 ## Current Project Pull Request Flow
 

@@ -265,7 +265,9 @@ SEO and launch basics:
 
 Performance and Core Web Vitals:
 
-- Run PageSpeed Insights or Lighthouse only after approval and only against the correct preview/production URL.
+- Run PageSpeed Insights or Lighthouse only after approval and only against the correct URL.
+- Run against the Vercel preview URL before DNS cutover to catch performance issues early (lab data only at this stage).
+- Re-run against the live URL after DNS cutover to confirm production performance. Field data (real Chrome user measurements) will only appear in PageSpeed Insights once the live URL has accumulated real traffic, typically after several weeks.
 - Check LCP, INP, and CLS against Google's current Core Web Vitals thresholds.
 - Investigate bundle size only if lab or field data shows JavaScript is a material bottleneck.
 
@@ -275,10 +277,11 @@ External checks to record separately:
 - HTTPS works.
 - Canonical redirects are correct.
 - Forms send data to the correct destination.
-- Security headers are present on the deployed URL.
-- PageSpeed Insights has been checked for the deployed URL.
+- Security headers confirmed on the Vercel preview URL using securityheaders.com before DNS cutover.
+- Security headers re-confirmed on the live URL using securityheaders.com after DNS cutover.
+- PageSpeed Insights has been checked against both the Vercel preview URL and the live URL.
+- Real-device checks are complete on iPhone Safari and Android Chrome against the Vercel preview URL before DNS cutover.
 - Google Search Console or analytics checks are complete when available.
-- Real-device checks are complete on iPhone Safari and Android Chrome where practical.
 
 ## AI Assistant Instructions
 
