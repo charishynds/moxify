@@ -4,19 +4,23 @@ This file tracks account-side setup that cannot be completed safely from local G
 
 ## Current Status
 
-- Local branch `main` has been created from the old `master` branch.
-- Remote branch `origin/main` has been pushed.
-- The current review work remains on `review-must-should-fixes-20260513`.
-- `master` still exists locally and remotely until GitHub's default branch is changed.
+- GitHub default branch is `main`.
+- Local and remote `main` are in use.
+- The review pull request has been merged into `main`.
+- Retired local and remote branches have been deleted/pruned.
+- Vercel production branch tracking is set to `main`.
+- Vercel preview deployments are enabled and working for pull request branches.
+- Vercel Production and Preview environment variables use the same Supabase project intentionally for now.
 - Canonical global SOP exists at `C:\Development\_shared\website-operating-procedure.md`.
 
 ## Must Do In GitHub
 
-1. Go to GitHub repo settings.
-2. Change the default branch from `master` to `main`.
-3. Check any open pull requests and retarget them to `main` if needed.
-4. After confirming nothing depends on `master`, delete the remote `master` branch.
-5. Optionally delete the local `master` branch after the remote default branch is changed.
+Completed for this repo:
+
+1. GitHub default branch changed from `master` to `main`.
+2. Review pull request merged into `main`.
+3. Retired remote branches deleted.
+4. Retired local branches deleted.
 
 Recommended branch protection for a solo/client workflow:
 
@@ -27,12 +31,17 @@ Recommended branch protection for a solo/client workflow:
 
 ## Must Do In Vercel
 
-1. Open the Vercel project settings.
-2. Confirm the connected Git repository is correct.
-3. Set the production branch to `main`.
-4. Confirm preview deployments are enabled for pull requests/branches.
-5. Confirm production and preview environment variables are set correctly.
-6. Deploy from `main` only when ready for production.
+Completed for this repo:
+
+1. Connected Git repository confirmed.
+2. Production branch set to `main`.
+3. Preview deployments confirmed for pull request branches.
+4. Production and Preview environment variables configured.
+5. Merge to `main` creates the Production Deployment.
+
+Ongoing rule:
+
+- Deploy from `main` only when ready for production.
 
 Normal release path:
 
@@ -42,15 +51,50 @@ Normal release path:
 
 Avoid using "Promote to Production" as the normal release path, because it can make production differ from the Git `main` branch.
 
+## Must Do In Supabase
+
+Completed for this repo:
+
+1. Row Level Security is enabled on the `enquiries` table.
+2. Anonymous/browser users can insert rows into `enquiries`.
+3. Anonymous/browser users cannot select, update, or delete rows in `enquiries`.
+4. Database constraints match the frontend form expectations.
+5. Required fields are enforced server-side as well as in the browser.
+6. The Vercel `VITE_SUPABASE_URL` value matches the Supabase project allowed in `vercel.json`.
+7. The Vercel `VITE_SUPABASE_ANON_KEY` value is a publishable/anon key, not a secret or service role key.
+8. Spam expectations are acceptable for launch, with the current frontend honeypot treated as lightweight protection rather than a complete anti-spam system.
+
+Current intentional setup:
+
+- Production and Preview use the same Supabase project.
+- Test submissions from preview deployments may land in the same table as production submissions.
+
+Ongoing rule:
+
+- Keep the current frontend honeypot as lightweight spam protection for launch. Add stronger protection, such as Cloudflare Turnstile, reCAPTCHA, rate limiting, or a serverless form endpoint, if spam becomes a real issue.
+
+## Remaining External Checks
+
+These are not blockers for the current GitHub/Vercel/Supabase setup, but should be done before or shortly after the real custom domain launch:
+
+1. Submit one test enquiry on the production Vercel URL and confirm it appears in Supabase.
+2. Confirm Vercel Analytics is receiving data after the production site has real visits.
+3. Run PageSpeed Insights or Lighthouse against the correct live URL after DNS points at the new site.
+4. Check Google Search Console Core Web Vitals once field data is available.
+5. Smoke test on real iPhone Safari and Android Chrome.
+6. Confirm custom domain, HTTPS redirects, and HSTS readiness before enabling any preload-related DNS/browser commitments.
+
 ## Current Project Pull Request Flow
 
-The current review branch is:
+Use this flow for future meaningful changes:
 
-```text
-review-must-should-fixes-20260513
-```
-
-After GitHub default branch is changed to `main`, open or retarget the pull request from this branch into `main`.
+1. Create a feature branch from `main`.
+2. Push the branch to GitHub.
+3. Review the Vercel Preview Deployment.
+4. Open a pull request into `main`.
+5. Merge only after checks and preview review pass.
+6. Confirm the Production Deployment from `main`.
+7. Delete the merged feature branch.
 
 ## Repeat For Other Projects
 
