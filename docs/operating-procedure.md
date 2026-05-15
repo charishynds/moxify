@@ -1,12 +1,18 @@
 # Website Project Operating Procedure
 
-Canonical shared SOP path:
+Canonical SOP:
+
+```text
+https://github.com/charishynds/website-standards/blob/main/website-operating-procedure.md
+```
+
+Local mirror path:
 
 ```text
 C:\Development\_shared\website-operating-procedure.md
 ```
 
-This repo-local file is a project copy of the shared SOP. If the shared SOP changes, update this file or replace it with the latest shared version.
+This repo-local file is a project copy of the shared SOP. If the canonical SOP changes, update this file or replace it with the latest shared version.
 
 This procedure is intended for small client websites built by one person, with enough structure that another developer or AI assistant can step in safely.
 
