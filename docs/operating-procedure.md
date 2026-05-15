@@ -25,11 +25,13 @@ If an AI assistant is asked to "read the global SOP and follow it", that instruc
    - `.env.example`
    - `docs/repo-admin-checklist.md`
    - relevant `README.md` workflow/setup/deployment sections
-4. Identify project-specific setup gaps and document them.
-5. Ask before running checks.
-6. Ask before any networked, external, GitHub, Vercel, Supabase, DNS, Search Console, deploy, push, merge, branch deletion, dependency install/update, or destructive action.
-7. Do not mark external checks complete unless they were actually run against the correct project/site.
-8. Leave a clear summary of completed setup and remaining owner actions.
+4. Treat `docs/repo-admin-checklist.md` as the repo's living task, to-do, owner-action, and admin checklist for the full project lifecycle.
+5. When the project owner asks to add something to "the checklist", "tasks", "to-dos", "remaining items", or similar, add it to `docs/repo-admin-checklist.md` unless they clearly name a different file.
+6. Identify project-specific setup gaps and document them.
+7. Ask before running checks.
+8. Ask before any networked, external, GitHub, Vercel, Supabase, DNS, Search Console, deploy, push, merge, branch deletion, dependency install/update, or destructive action.
+9. Do not mark external checks complete unless they were actually run against the correct project/site.
+10. Leave a clear summary of completed setup and remaining owner actions.
 
 The project owner should only need to say:
 
@@ -51,6 +53,27 @@ Use GitHub Flow:
 8. Let Vercel deploy production from `main`.
 
 Do not use Vercel "Promote to Production" as the normal release path. Use it only for unusual cases where a specific deployment must be promoted outside the Git merge flow.
+
+## Default Lightweight Website Stack
+
+For new lightweight client websites, use this stack unless the project brief says otherwise:
+
+- React with Vite for the frontend.
+- TypeScript by default; use JavaScript only for very small sites or existing JavaScript projects where TypeScript would add unnecessary migration work.
+- Tailwind CSS for styling.
+- GitHub for source control.
+- GitHub Flow with `main` as the production branch.
+- Vercel for hosting, preview deployments, and production deployments.
+- Supabase for forms, simple data storage, auth, or lightweight backend needs.
+- Sanity for CMS-managed content when a site needs client-editable pages, posts, case studies, team profiles, resources, or similar structured content.
+- Vercel Analytics for lightweight analytics, with Google Search Console and PageSpeed Insights for search and Core Web Vitals checks.
+- npm unless the existing project already uses another package manager.
+
+For existing projects, inspect and respect the current stack first. If the stack differs from this standard, clearly report what is different, explain the practical implications, and ask the owner before changing, migrating, or standardising it.
+
+Do not introduce Docker by default for these lightweight sites. Docker is only needed when a project has a clear reason, such as a custom backend, local database stack, complex services, or container-based deployment requirements.
+
+When Supabase is used, document tables, RLS policies, permissions, database constraints, and preview/production environment variables. When Sanity is used, document datasets, schemas, Studio access, preview/production environment variables, and the editorial workflow.
 
 ## Branch Naming
 
@@ -150,6 +173,25 @@ Vercel URL:
 - 
 ```
 
+## Living Repo Checklist
+
+Every repo following this SOP must have:
+
+```text
+docs/repo-admin-checklist.md
+```
+
+Use this file as the project's living task and owner-action tracker. It should include:
+
+- account-side setup items for GitHub, Vercel, Supabase, DNS, analytics, Search Console, and other external tools
+- launch, pre-production, and post-launch checks
+- outstanding technical, content, design, SEO, accessibility, performance, and security items
+- decisions made, intentional tradeoffs, and deferred nice-to-have work
+- tasks the owner needs to do outside the codebase
+- tasks future AIs or developers should pick up later
+
+When the owner says "add this to the checklist", "add this to tasks", "put this on the to-do list", or similar, update `docs/repo-admin-checklist.md` by default. Keep the checklist current as work is completed, deferred, or discovered.
+
 ## Vercel Deployment Model
 
 - Branch pushes and pull requests create Preview Deployments.
@@ -248,6 +290,7 @@ AI assistants must:
 - Ask before running checks, especially external/networked checks, account-side actions, deploys, or destructive commands.
 - Run approved lint/build checks before recommending a merge.
 - Record external checks that require account access rather than pretending they were completed.
+- Keep `docs/repo-admin-checklist.md` current as the living task/to-do tracker when new work, owner actions, or follow-ups are identified.
 - Keep `README.md` and relevant docs up to date when project setup changes.
 
 ## Reusing This Procedure In Other Projects
@@ -255,6 +298,7 @@ AI assistants must:
 For each client/site repo, copy or recreate these files:
 
 - `docs/operating-procedure.md`
+- `docs/repo-admin-checklist.md`
 - `AGENTS.md`
 - `CLAUDE.md`
 - `AI_INSTRUCTIONS.md`
